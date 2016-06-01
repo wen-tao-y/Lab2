@@ -24,6 +24,9 @@ public class AccelerationSensorEventListener implements SensorEventListener {
     int loop;
     double[][] values;
     final int C;
+    double wmA;
+    double[] cosine;
+
 
     public AccelerationSensorEventListener(TextView outputView, TextView stepView, LineGraphView lineGraph, Button but) {
         output = outputView;
@@ -38,6 +41,8 @@ public class AccelerationSensorEventListener implements SensorEventListener {
         loop = 0;
         values = new double [3][25];
         C=5;
+        wmA = 0;
+        cosine= new double[24];
     }
 
     public void onSensorChanged(SensorEvent se) {
@@ -48,17 +53,30 @@ public class AccelerationSensorEventListener implements SensorEventListener {
             y[loop] = se.values[1];
             z[loop] = se.values[2];
             if (loop == 25) { //Low pass filter
-                for (int p = 0; p < 3; p++) { //
+                for (int p = 0; p < 3; p++) {
                     values[p][loop - 1] += (se.values[p] - values[p][loop - 1]) / C;
                 }
-                loop = 0; //Reset loop to 0
+                loop = 0; //Reset loop to 0 when loop =25
             }
+            //Compute the moving average (wmA), store in wmA
+            //Update wmA
+            //Test the value of the wmA
+            
+            //Adjust step by 1
 
-
-            for (int p = 0; p < 3; p++) {
+            for (int p = 0; p < 3; p++) { //Assigns x,y,z values to values array
                 values[p][loop] = se.values[p];
             }
             loop++;
+
+            //Compute the cosine
+            if (loop >0) {
+                cosine[loop-1] = ((values[0][loop]*values[0][loop-1]) + (values[1][loop]*values[1][loop-1]) * (values[2][loop]*values[2][loop-1]));
+                cosine[loop-1] = (cosine[loop-1])/Math.sqrt((values[0][loop]*values[0][loop]) + (values[1][loop]*values[1][loop]) * (values[2][loop]*values[2][loop]));
+                cosine[loop-1] = (cosine[loop-1])/Math.sqrt((values[0][loop-1]*values[0][loop-1]) + (values[1][loop-1]*values[1][loop-1]) * (values[2][loop-1]*values[2][loop-1]));
+            }
+
+
 
             graph.addPoint(se.values);
             String s = String.format("Accelerometer: \nx: %f, y: %f, z:%f", se.values[0], se.values[1], se.values[2]);
@@ -66,6 +84,7 @@ public class AccelerationSensorEventListener implements SensorEventListener {
             String sm = String.format("Steps: %d", step);
             stepView.setText(sm);
         }
+
     }
 
         @Override
