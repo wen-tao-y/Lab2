@@ -3,7 +3,7 @@
     android:id="@+id/scroll"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
-<LinearLayoutLayout
+<LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
@@ -32,5 +32,5 @@
         android:layout_width="wrap_content"
         android:id="@+id/b"
         android:onClick="selfDestruct" />
-</LinearLayoutLayout>
+</LinearLayout>
     </ScrollView>
