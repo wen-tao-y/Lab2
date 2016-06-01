@@ -44,31 +44,33 @@ public class AccelerationSensorEventListener implements SensorEventListener {
 
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-            x[loop]=se.values[0];
-            y[loop]=se.values[1];
-            z[loop]=se.values[2];
-            if (loop==25) {
-                for (int p = 0; p < 3; p++) {
+            x[loop] = se.values[0];
+            y[loop] = se.values[1];
+            z[loop] = se.values[2];
+            if (loop == 25) { //Low pass filter
+                for (int p = 0; p < 3; p++) { //
                     values[p][loop - 1] += (se.values[p] - values[p][loop - 1]) / C;
                 }
-            }
-                loop=0;
-            }
-            for (int p=0;p<3;p++) {
-                values[p][loop]=se.values[p];
+                loop = 0; //Reset loop to 0
             }
 
+
+            for (int p = 0; p < 3; p++) {
+                values[p][loop] = se.values[p];
+            }
+            loop++;
 
             graph.addPoint(se.values);
-            String s = String.format("Accelerometer: \nx: %f, y: %f, z:%f", se.values[0],se.values[1],se.values[2]);
+            String s = String.format("Accelerometer: \nx: %f, y: %f, z:%f", se.values[0], se.values[1], se.values[2]);
             output.setText(s);
-            String sm = String.format("Steps: %d",step);
+            String sm = String.format("Steps: %d", step);
             stepView.setText(sm);
         }
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
+
+        @Override
+        public void onAccuracyChanged (Sensor sensor,int accuracy){
+
+        }
+
 }
