@@ -13,34 +13,36 @@ import ca.uwaterloo.sensortoy.LineGraphView;
  */
 public class AccelerationSensorEventListener implements SensorEventListener {
     protected TextView output;
-    protected TextView maxOutput;
+    protected TextView stepView;
     protected double[] maxValue;
     protected Button button;
-
+    protected int step;
     protected LineGraphView graph;
 
-    public AccelerationSensorEventListener(TextView outputView, LineGraphView lineGraph, Button but) {
+    public AccelerationSensorEventListener(TextView outputView, TextView stepView, LineGraphView lineGraph, Button but) {
         output = outputView;
-
+        this.stepView=stepView;
+        step=0;
         graph = lineGraph;
         button = but;
         maxValue = new double[3];
 
     }
-    @Override
+
     public void onSensorChanged(SensorEvent se) {
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
-            for(int i=0;i<3;i++){
-                if(maxValue[i]<Math.abs(se.values[i])){
-                    maxValue[i]=Math.abs(se.values[i]);
-                }
-            }
+
             graph.addPoint(se.values);
             String s = String.format("Accelerometer: \nx: %f, y: %f, z:%f", se.values[0],se.values[1],se.values[2]);
             output.setText(s);
-            String sm = String.format("Max: \nx: %f, y: %f, z: %f", maxValue[0],maxValue[1],maxValue[2]);
-            maxOutput.setText(sm);
+            String sm = String.format("Steps: %d",step);
+            stepView.setText(sm);
         }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
