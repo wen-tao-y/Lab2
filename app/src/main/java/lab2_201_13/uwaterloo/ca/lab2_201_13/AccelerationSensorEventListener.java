@@ -57,12 +57,21 @@ public class AccelerationSensorEventListener implements SensorEventListener {
                     values[p][loop - 1] += (se.values[p] - values[p][loop - 1]) / C;
                 }
                 loop = 0; //Reset loop to 0 when loop =25
+                int divider=0;
+                for(int i=0;i<24;i++){
+                    wmA+=i*cosine[i];
+                    divider+=i+1;
+                }
+                wmA/=divider;
             }
-            //Compute the moving average (wmA), store in wmA
-            //Update wmA
+            //Compute the moving average (wmA), store in wmA   √
+            //Update wmA    √
             //Test the value of the wmA
+            if(wmA<=0.9&&wmA>=-0.15){
+                step+=1;
+            }
             
-            //Adjust step by 1
+            //Adjust step by 1 √
 
             for (int p = 0; p < 3; p++) { //Assigns x,y,z values to values array
                 values[p][loop] = se.values[p];
