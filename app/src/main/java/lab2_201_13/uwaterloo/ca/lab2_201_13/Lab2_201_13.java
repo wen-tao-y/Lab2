@@ -27,14 +27,14 @@ public class Lab2_201_13 extends AppCompatActivity {
 
         LineGraphView graph = new LineGraphView(getApplicationContext(),
                 100,
-                Arrays.asList("x", "y", "z"));
+                Arrays.asList("x"));
         ll.addView(graph); graph.setVisibility(View.VISIBLE);
 
 
         SensorManager sensorManager =
                 (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor accelerometerSensor =
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         AccelerationSensorEventListener a = new AccelerationSensorEventListener(tv1,tv2,graph,button);
         sensorManager.registerListener(a, accelerometerSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);

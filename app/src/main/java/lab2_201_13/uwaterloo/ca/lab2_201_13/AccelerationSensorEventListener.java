@@ -3,8 +3,13 @@ package lab2_201_13.uwaterloo.ca.lab2_201_13;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import ca.uwaterloo.sensortoy.LineGraphView;
 
@@ -18,12 +23,10 @@ public class AccelerationSensorEventListener implements SensorEventListener {
     protected Button button;
     protected int step;
     protected LineGraphView graph;
-    double[] y;
-    double[] z;
-    double[]x;
-    int loop;
-    double[][] values;
-    final int C;
+
+
+    double[] values;
+
     double wmA;
     double[] cosine;
 
@@ -35,63 +38,73 @@ public class AccelerationSensorEventListener implements SensorEventListener {
         graph = lineGraph;
         button = but;
         maxValue = new double[3];
-        x= new double[25];
-        y= new double[25];
-        z= new double[25];
-        loop = 0;
-        values = new double [3][25];
-        C=5;
+
+
+        values = new double[]{0,0,0};
+
+
         wmA = 0;
-        cosine= new double[24];
+        cosine= new double[10];
+        for(int i=0;i<10;i++){
+            cosine[i]=0;
+        }
     }
 
     public void onSensorChanged(SensorEvent se) {
 
         if (se.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+            wmA=0;
+            double cos=0;
 
-            x[loop] = se.values[0];
-            y[loop] = se.values[1];
-            z[loop] = se.values[2];
-            if (loop == 25) { //Low pass filter
-                for (int p = 0; p < 3; p++) {
-                    values[p][loop - 1] += (se.values[p] - values[p][loop - 1]) / C;
+            cos=(se.values[0]*values[0]+se.values[1]*values[1]+se.values[2]*values[2])/
+                    Math.sqrt(se.values[0]*se.values[0]+se.values[1]*se.values[1]+se.values[2]*se.values[2])/
+                    Math.sqrt(values[0]*values[0]+values[1]*values[1]+values[2]*values[2]);
+
+            //compute cos
+            for(int i=0;i<9;i++){
+                cosine[i]=cosine[i+1];
+            }
+            cosine[9]=cos;
+            //update cosing[]  (Queue?)
+
+
+            for(int i=0;i<10;i++){
+                wmA=wmA+(double)i*cosine[i];
+                Log.d("wma: ",String.valueOf(wmA));//debug wma
+
                 }
-                loop = 0; //Reset loop to 0 when loop =25
-                int divider=0;
-                for(int i=0;i<24;i++){
-                    wmA+=i*cosine[i];
-                    divider+=i+1;
+                wmA/=(double)55;
+            Log.d("cos: ",String.valueOf(cos));
+            //compute wma √
+
+                Log.d("wmaAfter: ",String.valueOf(wmA));//debug wma
+
+                if(wmA<=0){
+                    step+=1;
                 }
-                wmA/=divider;
+                //update step
+
+            //Prepare for next iteration:
+            //1. store se.values
+            for(int i=0;i<3;i++){
+                values[i]=se.values[i];
             }
-            //Compute the moving average (wmA), store in wmA   √
-            //Update wmA    √
-            //Test the value of the wmA
-            if(wmA<=0.9&&wmA>=-0.15){
-                step+=1;
-            }
-            
-            //Adjust step by 1 √
-
-            for (int p = 0; p < 3; p++) { //Assigns x,y,z values to values array
-                values[p][loop] = se.values[p];
-            }
-            loop++;
-
-            //Compute the cosine
-            if (loop >0) {
-                cosine[loop-1] = ((values[0][loop]*values[0][loop-1]) + (values[1][loop]*values[1][loop-1]) * (values[2][loop]*values[2][loop-1]));
-                cosine[loop-1] = (cosine[loop-1])/Math.sqrt((values[0][loop]*values[0][loop]) + (values[1][loop]*values[1][loop]) * (values[2][loop]*values[2][loop]));
-                cosine[loop-1] = (cosine[loop-1])/Math.sqrt((values[0][loop-1]*values[0][loop-1]) + (values[1][loop-1]*values[1][loop-1]) * (values[2][loop-1]*values[2][loop-1]));
-            }
+            //2. store wmA
 
 
 
-            graph.addPoint(se.values);
+
+
+
             String s = String.format("Accelerometer: \nx: %f, y: %f, z:%f", se.values[0], se.values[1], se.values[2]);
             output.setText(s);
             String sm = String.format("Steps: %d", step);
             stepView.setText(sm);
+
+
+
+
+
         }
 
     }
