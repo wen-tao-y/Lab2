@@ -20,22 +20,25 @@ public class Lab2_201_13 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lab2_201_13);
         TextView tv1 = (TextView) findViewById(R.id.label1);
-        TextView tv2 = (TextView) findViewById(R.id.label2);
+
         LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
         Button button = (Button) findViewById(R.id.b);
         ll.setOrientation(LinearLayout.VERTICAL);
 
-        LineGraphView graph = new LineGraphView(getApplicationContext(),
+        LineGraphView g1 = new LineGraphView(getApplicationContext(),
                 100,
-                Arrays.asList("x"));
-        ll.addView(graph); graph.setVisibility(View.VISIBLE);
-
+                Arrays.asList("x","y","z"));
+        ll.addView(g1); g1.setVisibility(View.VISIBLE);
+        LineGraphView g2 = new LineGraphView(getApplicationContext(),
+                100,
+                Arrays.asList("x","y","z"));
+        ll.addView(g2); g2.setVisibility(View.VISIBLE);
 
         SensorManager sensorManager =
                 (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor accelerometerSensor =
                 sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        AccelerationSensorEventListener a = new AccelerationSensorEventListener(tv1,tv2,graph,button);
+        AccelerationSensorEventListener a = new AccelerationSensorEventListener(tv1,g1,g2,button);
         sensorManager.registerListener(a, accelerometerSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
 
