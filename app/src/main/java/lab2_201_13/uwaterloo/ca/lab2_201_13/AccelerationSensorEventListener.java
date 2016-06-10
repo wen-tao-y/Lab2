@@ -29,18 +29,14 @@ public class AccelerationSensorEventListener implements SensorEventListener {
     final int fall = 2;
     final int rise = 1;
     float[] acc=new float[1];
-
-    //A constant for low pass filter
     float c = (float)1.8;
 
-    //Used to store the previous smooth value
     float[] prev = new float[1];
 
-    //The smooth values for linear acceleration sensor
     float[] current = new float[1];
 
 
-    //Constructor for the Accelerometer class with the parameter of text and a graph
+
     public AccelerationSensorEventListener(TextView outputView, LineGraphView g1, LineGraphView g2, Button but){
         output = outputView;
         this.g1 = g1;
@@ -91,7 +87,7 @@ public class AccelerationSensorEventListener implements SensorEventListener {
                     }
                     break;
 
-                //Count a step and turn the mode back to waiting
+
                 case 2:
                     step++;
                     this.state = wait;
